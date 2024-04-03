@@ -6,9 +6,10 @@ import random
 import datetime as dt
 from typing import Optional, Literal
 
+from cmds.games.gambling import GamblingHelper
 from cmds.games.games import traveler
 
-from utils import get_data, upd_data, is_cutie, GetLogLink, new_user, get_amount, translate, get_value, get_collect_time
+from utils import get_data, upd_data, is_cutie, GetLogLink, new_user, get_amount, translate, get_value, get_collect_time, get_user_data
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -54,10 +55,7 @@ class Economy(commands.Cog):
 		E.set_author(name=inter.user.name, icon_url=await GetLogLink(self.bot, inter.user.display_avatar.url))
 
 		# user_id : {user data}
-		try: 
-			user_data : dict = get_data(f"games/users/{inter.user.id}")
-		except :
-			user_data = new_user()
+		user_data = get_user_data(inter.user.id)
 
 		next_timely:int = user_data["timely"]
 
@@ -67,23 +65,42 @@ class Economy(commands.Cog):
 			E.description = f"{inter.user.mention}, Come back to claim your {value}🌹 <t:{next_timely}:R>"
 			E.color = discord.Color.red()
 			return await inter.followup.send(embed=E)
+		multiplicator = 1
 
+		if "next_collect_x3" in user_data["effects"]:
+			multiplicator = 3
+			user_data["effects"].remove("next_collect_x3")
+			E.description = f"Congratulation, you multiplied your collect by three!"
+			E.color = discord.Color.purple()
+			await inter.followup.send(embed=E)
 		time_to_wait = get_collect_time(is_cutie(inter), user_data["tech"])
 
-		# value/100 % to win a candy
-		candy = random.random()*100 <= value/100
+		# value/100 % to win a candy, capped at 5%
+		candy = random.random()*100 <= min(500,value)/100
 		if candy:
 			user_data["candies"] += 1
 
 		# add the data
 		user_data["timely"] = time_to_wait
-		user_data["roses"] += value
+		user_data["roses"] += value*multiplicator
 
 		upd_data(user_data, f"games/users/{inter.user.id}")
 
-		E.description = f"{inter.user.mention}, You claimed your {value}🌹 roses {'and 1🍬 candy' if candy else ''}! Come back <t:{time_to_wait}:R> to claim it again!"
+		E.description = f"{inter.user.mention}, You claimed your {value*multiplicator}🌹 roses {'and 1🍬 candy' if candy else ''}! Come back <t:{time_to_wait}:R> to claim it again!"
 		E.color = discord.Color.green()
 		await inter.followup.send(embed=E)
+		
+		if "free_flip_when_collect" in user_data["effects"]:
+			GH = GamblingHelper(self.bot)
+			guess : Literal["heads", "tails"] = random.choice(["heads", "tails"])
+			user_data["effects"].append("current_collect")
+			E = await GH.embed(inter,E)
+			E.description = f"Congratulations! You won a free flip !"
+			E.color = discord.Color.purple()
+			await inter.followup.send(embed=E)
+			await GH.flip(inter, str(value), guess)
+			user_data["effects"].remove("free_flip_when_collect")
+		
 
 	@app_commands.command(description="Allows you to upgrade your level")
 	@app_commands.checks.cooldown(1, 3, key=lambda i: (i.guild_id, i.user.id))
@@ -135,7 +152,9 @@ class Economy(commands.Cog):
 		except :
 			E.description = f"{inter.user.mention}, You can't upgrade your tech, you have never played"
 			return await inter.followup.send(embed=E)
-
+		if user_data["tech"]>=20:
+			E.description = f"{inter.user.mention}, You can't upgrade your tech, you're maxed already"
+			return await inter.followup.send(embed=E)
 		tech = user_data["tech"] + 1
 		price = tech*10
 

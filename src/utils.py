@@ -217,6 +217,13 @@ def get_belgian_time() -> dt.datetime:
 
 	return belgium_time
 
+def get_user_data(user_id:int) -> dict:
+	try: 
+		user_data : dict = get_data(f"games/users/{user_id}")
+	except :
+		user_data = new_user()
+	return user_data
+
 
 def log(type:str, txt:str) -> None:
 	"""Logs a message in the console and in the bot.log file."""
@@ -307,9 +314,18 @@ def new_user():
 			"candies" : 0,
 			"ideas"   : 0
 		},
+		"effects" : [],
 		"achievements" : [],
 		"wordle_en" : {},
-		"wordle_fr" : {}
+		"wordle_fr" : {},
+		"wordle_stats" : {
+			"1":0,
+			"2":0,
+			"3":0,
+			"4":0,
+			"5":0,
+			"6":0
+		}
 	}
 
 def get_amount(cash: int, txt: str) -> Optional[int]:
@@ -319,6 +335,7 @@ def get_amount(cash: int, txt: str) -> Optional[int]:
 		return int(float(txt))
 	except ValueError:
 		pass
+	
 
 	if txt == "all":
 		return cash

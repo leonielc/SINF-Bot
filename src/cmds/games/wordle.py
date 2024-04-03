@@ -7,11 +7,11 @@ import random
 import asyncio
 import datetime as dt
 from datetime import time
-from typing import Literal
+from typing import Literal, Optional
 
 
 from settings import DATA_DIR
-from utils import get_data, upd_data, get_value, get_belgian_time, new_user, GetLogLink, is_summer_time, simplify
+from utils import get_data, upd_data, get_value, get_belgian_time, new_user, GetLogLink, is_summer_time, simplify, is_member
 
 #! fonction 'get_words' accepts 4 columns csv
 class Wordle(commands.Cog):
@@ -65,15 +65,21 @@ class Wordle(commands.Cog):
 		
 		Wordle.active_games[user_id] = True
 		has_won = False
+		num_of_guess=6
 		
 		current_number_guess = len(user_data[current_w])
+		wordle_reduced = False
+		if "wordle_guess_reduced" in user_data["effects"]:
+			user_data["effects"].remove("wordle_guess_reduced")
+			num_of_guess=5
+			wordle_reduced = True
 		
 		already_won = False
 		if "🟩🟩🟩🟩🟩" in user_data[current_w].values():
 			already_won = True
 
 		#Check if the person already played today to continue the game
-		if current_number_guess>=6 or already_won:
+		if current_number_guess>=num_of_guess or already_won:
 			del Wordle.active_games[user_id]
 			already_guessed = ""
 
@@ -104,7 +110,7 @@ class Wordle(commands.Cog):
 			await inter.followup.send("Type *stop* to pause the game.", ephemeral = True)
 
 		#The user has 6 chances
-		while current_number_guess<6:
+		while current_number_guess<num_of_guess:
 
 			#Waiting for the user's response
 			def check(message: discord.Message):
@@ -173,6 +179,8 @@ class Wordle(commands.Cog):
 				await inter.followup.send("You won!", ephemeral=True)
 				E.description = f"{inter.user.mention} solved today's wordle ({language}) in {current_number_guess} guesses ! \n\n||{todays_colors}||"
 				E.add_field(name="Reward", value=f"You won {value} 🌹 {'and 2 💡' if both else 'and 1 💡'}!")
+				#stats = get_data(f"games/users/{inter.user.id}/wordle_stats/{current_number_guess}")+1
+				#upd_data(stats, f"games/users/{inter.user.id}/wordle_stats/{current_number_guess}")
 				E.color = discord.Color.green()
 				await inter.followup.send(embed = E)
 				break
@@ -186,8 +194,24 @@ class Wordle(commands.Cog):
 			E.description = f"{inter.user.mention} lost {language} wordle today. \n\n||{todays_colors}||"
 			E.color = discord.Color.red()
 			await inter.followup.send(embed = E)
-			
+
+		if wordle_reduced:
+			E.title = "Roulette"
+			E.description = f"Oops you only had 5 guesses today...\n"
+			E.color = discord.Color.purple()
+			await inter.followup.send(embed = E)
+
 		del Wordle.active_games[user_id]
+	
+	"""
+	@app_commands.command(name="profile", description="Shows the Wordle stats of a user")
+	@app_commands.guild_only()
+	@app_commands.describe(user="The user's stats you want to see")
+	@app_commands.checks.cooldown(1, 5, key=lambda i: (i.guild_id, i.user.id))
+	@app_commands.check(is_member)
+	async def profile(self, inter: discord.Interaction, user:Optional[str]):
+		pass
+	"""
 
 #Puts spaces between letters of guessed word and colors
 def space(content : str):
@@ -273,6 +297,7 @@ async def choose_todays_word(bot:commands.Bot) -> None:
 
 	await asyncio.sleep(sleep)
 
+	Wordle.active_games={}
 	upd_data(wordle_word_en, "games/todays_word_en")
 	upd_data(wordle_word_fr, "games/todays_word_fr")
 	for user_id in get_data("games/users").keys():

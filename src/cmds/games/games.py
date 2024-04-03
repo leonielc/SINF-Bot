@@ -8,13 +8,13 @@ import requests
 from typing import Optional
 
 from settings import BOT_CHANNEL_ID
-from utils import log, get_data, upd_data, get_value, new_user
+from utils import log, get_data, upd_data, get_value, new_user, get_user_data
 
 class Games(commands.Cog):
 	def __init__(self,bot):
 		self.bot : commands.Bot = bot
 
-		traveler.start(bot=self.bot)
+		#traveler.start(bot=self.bot)
 
 
 @tasks.loop()
@@ -79,10 +79,7 @@ async def traveler(*, bot: commands.Bot):
 		E.set_thumbnail(url=photo)
 
 		# user_id : {user data}
-		try: 
-			user_data : dict = get_data(f"games/users/{inter.user.id}")
-		except :
-			user_data = new_user()
+		user_data = get_user_data(inter.user.id)
 		if traveler:
 			value = get_value(user_data) 
 		else:
@@ -105,23 +102,25 @@ async def traveler(*, bot: commands.Bot):
 		E.set_thumbnail(url=photo)
 
 		# user_id : {user data}
-		try: 
-			user_data : dict = get_data(f"games/users/{inter.user.id}")
-		except :
-			user_data = new_user()
-
+		user_data = get_user_data(inter.user.id)
+		robber_money=0
 		E.description = f"The correct answer was **{correct_answer}**\n"
 		if traveler:
 			value = 50
 			E.description += "The traveler left **50🌹** by accident on the ground" 
 		else:
+
 			double_collect_value = get_value(user_data)*2
 			value = get_value(user_data)*(-2)
+			
 		
 		
 		if user_data["roses"]<0 and not traveler:
 			E.description += f"You're already in debt so the robber didn't take you anything"
 		else:
+			robber_money=(-1)*value
+			if user_data["roses"]+value<=0:
+				robber_money=user_data["roses"]
 			user_data["roses"] += value
 			if not traveler:
 				if user_data["roses"]<0:
@@ -129,6 +128,8 @@ async def traveler(*, bot: commands.Bot):
 					E.description += f"The robber took you all of your roses 🌹"
 				else:
 					E.description += f"The robber took you **{double_collect_value}** 🌹"
+				robber_money += get_data(f"games/robber_total")
+				upd_data(robber_money, "games/robber_total")
 			upd_data(user_data, f"games/users/{inter.user.id}")
 		await inter.followup.send(inter.user.mention, embed=E)
 
@@ -140,18 +141,28 @@ async def traveler(*, bot: commands.Bot):
 
 		async def callback(self, inter: discord.Interaction):
 			await inter.response.defer()
-			if question_type == "boolean":
-				if correct_answer.upper() == self.label:
-					await correct(inter)
-				else:
-					await incorrect(inter)
 
+			user_data = get_user_data(inter.user.id)
+			fail_next = False
+			if "fail_next_traveler" in user_data["effects"]:
+				user_data["effects"].remove("fail_next_traveler")
+				upd_data(user_data["effects"], f"games/users/{inter.user.id}/effects")
+				await incorrect(inter)
+				fail_next = True
 			else:
-				if str(correct_answer_index+1) == self.label:
-					await correct(inter)
-				else:
-					await incorrect(inter)
+				if question_type == "boolean":
+					if correct_answer.upper() == self.label:
+						await correct(inter)
+					else:
+						await incorrect(inter)
 
+				else:
+					if str(correct_answer_index+1) == self.label:
+						await correct(inter)
+					else:
+						await incorrect(inter)
+			if fail_next:
+				await inter.followup.send("You had 100% chances of losing today... ", ephemeral=True)
 			if isinstance(self.parent_view.message, discord.Message):
 				await self.parent_view.message.delete()
 			self.parent_view.stop()
