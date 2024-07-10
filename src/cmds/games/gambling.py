@@ -1,12 +1,13 @@
 import discord 
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 import random
 import datetime as dt
 from typing import Literal
+import asyncio
 
-from utils import get_data, upd_data, GetLogLink, get_amount, is_cutie, UnexpectedValue, get_value, random_avatar
+from utils import get_data, upd_data, GetLogLink, get_amount, is_cutie, UnexpectedValue, get_value, random_avatar, get_belgian_time
 from cmds.games.games import Games, traveler
 
 
@@ -21,38 +22,21 @@ class GamblingHelper():
 		E.set_author(name=inter.user.name, icon_url=await GetLogLink(self.bot,str(inter.user.display_avatar)))
 		E.set_thumbnail(url="https://media.discordapp.net/attachments/709313685226782751/1128082089397465218/thonking.gif")
 
-		# id : amount
-		True_or_False= {}
-		MCQ = {}
+		# store the question and its answers
+		question = {}
 
 		# create modal that write the question
-		class GetBet(discord.ui.Modal):
+		class GetQuestion(discord.ui.Modal):
 			def __init__(self, message:discord.Message, question_type:Literal["True or False", "MCQ"]):
 				self.message = message
 				self.question_type = question_type
 				super().__init__(title="Create the next traveler!")
-				if self.question_type=="MCQ":
-					question = discord.ui.TextInput(label="Question", default='', min_length=1, max_length=500)
-					answer = discord.ui.TextInput(label="Answer", default='', min_length=1, max_length=50)
-					answer_2 = discord.ui.TextInput(label="Possibility 2", default='', min_length=1, max_length=50)
-					answer_3 = discord.ui.TextInput(label="Possibility 3", default='', min_length=1, max_length=50)
-					answer_4 = discord.ui.TextInput(label="Possibility 4", default='', min_length=1, max_length=50)
-				else:
-					question = discord.ui.TextInput(label="Question", default='', min_length=0, max_length=500)
-					answer = discord.ui.TextInput(label="True or False (The answer)", default='', min_length=0, max_length=50)
+			test = discord.ui.TextInput(label="Question", default='1', min_length=1, max_length=150)
+			print(test)
+
 					
 			async def on_submit(self, inter2: discord.Interaction):
-				# get the amount 
-				question_type = self.question_type
-				if self.question_type == "Vrai_Faux":
-					True_or_False[inter2.user.id] = True
-
-				else:
-					MCQ[inter2.user.id] = True
-
-				#await self.message.edit(embed=E)
-
-				#await inter2.response.send_message(f'bet set!', ephemeral=True)
+				question[inter2.user.id] = question
 
 		# create the view that asks users to bet
 		class FirstView(discord.ui.View):
@@ -62,16 +46,16 @@ class GamblingHelper():
 
 			@discord.ui.button(label="True or False",style=discord.ButtonStyle.success)
 			async def True_False(self, inter2: discord.Interaction, _: discord.ui.Button):
-				if inter2.user.id in MCQ or inter2.user.id in True_or_False:
-					return await inter2.followup.send(f'You already bet', ephemeral=True)
+				if question.values()!=[]:
+					return await inter2.followup.send(f'You already ', ephemeral=True)
 				
-				# fetch the message back (>15 mins)
+				# fetch the message back (>15 mins) (time)
 				if not isinstance(inter2.channel, discord.TextChannel):
 					raise UnexpectedValue("inter2.channel is not a discord.TextChannel")
 				
 				message = await inter2.channel.fetch_message(self.message_id)
 
-				await inter2.response.send_modal(GetBet(message,"True or False"))
+				await inter2.response.send_modal(GetQuestion(message,"True or False"))
 				
 
 				# update timeout so it stays on time
@@ -79,7 +63,7 @@ class GamblingHelper():
 
 			@discord.ui.button(label="MCQ (4 possibilities)",style=discord.ButtonStyle.danger)
 			async def MCQ(self, inter2: discord.Interaction, _: discord.ui.Button):
-				if inter2.user.id in MCQ or inter2.user.id in True_or_False:
+				if question.values()!=[]:
 					return await inter2.followup.send("Cannot interact with this message", ephemeral=True)
 
 				# fetch the message back (>15 mins)
@@ -88,7 +72,7 @@ class GamblingHelper():
 				
 				message = await inter2.channel.fetch_message(self.message_id)
 
-				await inter2.response.send_modal(GetBet(message, "MCQ"))
+				await inter2.response.send_modal(GetQuestion(message, "MCQ"))
 
 				# update timeout so it stays on time
 				self.timeout = time_ends - int(dt.datetime.now().timestamp())
@@ -479,8 +463,7 @@ class GamblingHelper():
 
 		E, user_data = await self.check(inter)
 
-		
-		if user_data["candies"]<1:
+		if user_data["candies"]<1 and user_data["free_sunday_roll"] == 0:
 			E.description = f"{inter.user.mention}, You don't have enough 🍬"
 			E.color = discord.Color.red()
 			return await inter.response.send_message(embed=E)
@@ -499,11 +482,20 @@ class GamblingHelper():
 		E.set_author(name=inter.user.display_name, url = await GetLogLink(self.bot, url))
 		E.set_footer(text="Roulette by Scylla and Ceisal")
 		E = discord.Embed(title="Roulette")
-		E.description = f"{inter.user.mention} used the roulette! It costs only one 🍬."
-		E.color = discord.Color.purple()
 
-		await inter.response.send_message(embed = E)
-		upd_data(user_data["candies"]-1, f"games/users/{inter.user.id}/candies")
+		if user_data["free_sunday_roll"] == 0:
+			E.description = f"{inter.user.mention} used the roulette! It costs only one 🍬."
+			E.color = discord.Color.purple()
+
+			await inter.response.send_message(embed = E)
+			upd_data(user_data["candies"]-1, f"games/users/{inter.user.id}/candies")
+
+		else:
+			E.description = f"{inter.user.mention} used the roulette! Free sunday roll!"
+			E.color = discord.Color.purple()
+
+			await inter.response.send_message(embed = E)
+			upd_data(0, f"games/users/{inter.user.id}/free_sunday_roll")
 
 		consequences = {
 			"level_up" : 2,  #ça marche
@@ -763,6 +755,23 @@ class Gambling(commands.Cog):
 	@app_commands.guild_only()
 	async def roulette(self, inter:discord.Interaction, other_user:discord.Member):
 		await self.GH.roulette(inter, other_user)
-	
+
+@tasks.loop()
+async def free_sunday_roll(bot:commands.Bot) -> None:
+	#Je sais pas comment on fait ça j'ai rien fait
+
+	now = get_belgian_time()
+	tomorrow = now + dt.timedelta(days=1)
+
+	date = dt.datetime(tomorrow.year, tomorrow.month, tomorrow.day)
+
+	sleep = (date - now).total_seconds()
+
+
+	await asyncio.sleep(sleep)
+
+	for user_id in get_data("games/users").keys():
+		upd_data(1, f"games/users/{user_id}/free_sunday_roll")
+	#Il faut aussi remettre à 0 le dimanche soir
 async def setup(bot:commands.Bot):
 	await bot.add_cog(Gambling(bot))

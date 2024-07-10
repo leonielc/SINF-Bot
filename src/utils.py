@@ -318,14 +318,27 @@ def new_user():
 		"achievements" : [],
 		"wordle_en" : {},
 		"wordle_fr" : {},
-		"wordle_stats" : {
+		"wordle_stats_en" : {
 			"1":0,
 			"2":0,
 			"3":0,
 			"4":0,
 			"5":0,
-			"6":0
-		}
+			"6":0,
+			"lost":0,
+			"streak":0,
+			"max_streak":0
+		},
+		"wordle_stats_fr" : {
+			"1":0,
+			"2":0,
+			"3":0,
+			"4":0,
+			"5":0,
+			"6":0,
+			"lost":0
+		},
+		"free_sunday_roll" : 0
 	}
 
 def get_amount(cash: int, txt: str) -> Optional[int]:

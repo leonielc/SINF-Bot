@@ -118,7 +118,7 @@ class Wordle(commands.Cog):
 			try:
 				message = await self.bot.wait_for("message", timeout = 180, check = check)
 			except asyncio.TimeoutError:
-				Wordle.active_games[user_id] = False
+				Wordle.active_games[user_id] = False 
 				return await inter.followup.send("See you later", ephemeral=True)
 			guess_word = simplify(message.content.lower())
 			await message.delete()
@@ -158,6 +158,11 @@ class Wordle(commands.Cog):
 			
 			#Check if the user won 
 			if wordle_word == guess_word:
+				if language == "English":
+					upd_data(user_data["wordle_stats_en"][f"{current_number_guess}"]+1, f"games/users/{inter.user.id}/wordle_stats_en/{current_number_guess}")
+				else:
+					upd_data(user_data["wordle_stats_fr"][f"{current_number_guess}"]+1, f"games/users/{inter.user.id}/wordle_stats_fr/{current_number_guess}")
+
 				has_won=True
 				todays_colors=""
 				for color in user_data[current_w].values():
@@ -186,6 +191,11 @@ class Wordle(commands.Cog):
 				break
 		
 		if not has_won:
+			if language == "English":
+				upd_data(user_data["wordle_stats_en"][f"{current_number_guess}"]+1, f"games/users/{inter.user.id}/wordle_stats_en/lost")
+			else:
+				upd_data(user_data["wordle_stats_fr"][f"{current_number_guess}"]+1, f"games/users/{inter.user.id}/wordle_stats_fr/lost")
+
 			todays_colors=""
 			for color in user_data[current_w].values():
 				todays_colors+=color+"\n"
@@ -203,16 +213,39 @@ class Wordle(commands.Cog):
 
 		del Wordle.active_games[user_id]
 	
-	"""
-	@app_commands.command(name="profile", description="Shows the Wordle stats of a user")
+	
+	"""@app_commands.command(name="profile", description="Shows the Wordle stats of a user")
 	@app_commands.guild_only()
 	@app_commands.describe(user="The user's stats you want to see")
 	@app_commands.checks.cooldown(1, 5, key=lambda i: (i.guild_id, i.user.id))
 	@app_commands.check(is_member)
 	async def profile(self, inter: discord.Interaction, user:Optional[str]):
-		pass
-	"""
+		await inter.response.defer()
 
+		# if not target specified, target is the user
+		target = inter.user
+		if user is not None:
+			target = user
+
+		E = discord.Embed()
+		E.color = discord.Color.blurple()
+		E.set_author(name=inter.user.name, icon_url = await GetLogLink(self.bot, inter.user.display_avatar.url))
+
+		try: 
+			user_data : dict = get_data(f"games/users/{inter.user.id}")
+		except :
+			E.description = f"{inter.user.mention} has never played"
+			E.color = discord.Color.red()
+			return await inter.followup.send(embed=E)
+		
+		played = sum(list(user_data["wordle_stats_en"].values())[:6])
+		win = int(((played-user_data["wordle_stats_en/lost"])/played)*100)
+		E.title = f"{played}  {win}% "
+		E.description  = f"- **{user_data['roses']}🌹**\n"
+		E.description += f"- **{user_data['candies']}🍬**\n"
+		E.description += f"- **{user_data['ideas']}💡**\n"
+		await inter.followup.send(embed=E)"""
+	
 #Puts spaces between letters of guessed word and colors
 def space(content : str):
 	spaced_word = ""
@@ -282,6 +315,8 @@ def color_function(wordle_word:str, guess_word:str) -> str:
 
 @tasks.loop()
 async def choose_todays_word(bot:commands.Bot) -> None:
+	#user_data = await self.get_data_wordle(inter)
+
 	wordle_list_en = get_words()[2]
 	wordle_list_fr = get_words()[3]
 
@@ -300,7 +335,23 @@ async def choose_todays_word(bot:commands.Bot) -> None:
 	Wordle.active_games={}
 	upd_data(wordle_word_en, "games/todays_word_en")
 	upd_data(wordle_word_fr, "games/todays_word_fr")
+	"""for user_id in get_data("games/users").keys():
+		if "🟩🟩🟩🟩🟩" in user_data["wordle_en"].values():
+			user_data["wordle_stats_en/streak"]+=1
+			if user_data["wordle_stats_en/streak"]>=user_data["wordle_stats_en/max_streak"]:
+				user_data["wordle_stats_en/max_streak"] = user_data["wordle_stats_en/streak"]
+		else:
+			user_data["wordle_stats_en/streak"]=0
+	"""
 	for user_id in get_data("games/users").keys():
+		"""if "🟩🟩🟩🟩🟩" in user_data["wordle_fr"].values():
+			user_data["wordle_stats_fr/streak"]+=1
+			if user_data["wordle_stats_fr/streak"]>=user_data["wordle_stats_fr/max_streak"]:
+				user_data["wordle_stats_fr/max_streak"] = user_data["wordle_stats_fr/streak"]
+		else:
+			user_data["wordle_stats_fr/streak"]=0"""
+		
+		#upd_data(user_data, f"games/users/{inter.user.id}")
 		upd_data({}, f"games/users/{user_id}/wordle_en")
 		upd_data({}, f"games/users/{user_id}/wordle_fr")
 		
