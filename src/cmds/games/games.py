@@ -288,12 +288,26 @@ async def traveler(*, bot: commands.Bot):
 	# extract the data
 	category:str = data["results"][0]["category"]
 	difficulty:str = data["results"][0]["difficulty"]
-
-	question_type:str = data["results"][0]["type"]
+	new_traveler:list[str] = get_data(f"games/created_traveler")
+	creator:str = ""
+	if len(new_traveler)!=0:
+		if len(new_traveler)==6:
+			question_type:str = "multiple"
+		else:
+			question_type:str = "boolean"
+		creator = new_traveler[-1]
+	else:
+		question_type:str = data["results"][0]["type"]
 	# convert html entities to normal unicode text
 	question:str = html.unescape(data["results"][0]["question"])
 	correct_answer:str = html.unescape(data["results"][0]["correct_answer"])
 	incorrect_answers:list = list(map(html.unescape, data["results"][0]["incorrect_answers"]))
+	if len(get_data(f"games/created_traveler"))!=0:
+		question = new_traveler[0]
+		correct_answer = new_traveler[1]
+		incorrect_answers = new_traveler[2:-1]
+		upd_data([], "games/created_traveler")
+		difficulty = "Random"
 
 	# create a list of answers and randomize them
 	answers = []
@@ -306,7 +320,7 @@ async def traveler(*, bot: commands.Bot):
 	# create embed
 	E = discord.Embed(title='Traveler', description=f"**{question}**")
 	E.description = f"## **{question}**\n\n"
-	E.set_footer(text=f"Category: {category} | Difficulty: {difficulty} | Type: {question_type}")
+	E.set_footer(text=f"{f'Created by {creator} | 'if len(new_traveler)!=0 else f'Category: {category} | Difficulty: {difficulty} |' }Type: {question_type}")
 	E.set_thumbnail(url="https://media.discordapp.net/attachments/709313685226782751/1127893104402386966/traveler.png")
 
 	if difficulty == "easy":
@@ -315,6 +329,8 @@ async def traveler(*, bot: commands.Bot):
 		E.color = discord.Color.gold()
 	elif difficulty == "hard":
 		E.color = discord.Color.red()
+	else:
+		E.color = discord.Color.purple()
 	
 	# check if it will be a traveler or a robber : traveler = 1 and robber = 0
 	traveler = random.getrandbits(1)
@@ -325,6 +341,21 @@ async def traveler(*, bot: commands.Bot):
 
 	# handle the correct and incorrect cases
 	async def correct(inter:discord.Interaction):
+		# check if the creator of the traveler is trying to answer the traveler
+		if inter.user.name == creator:
+			assert inter.guild
+			await inter.followup.send("You can't answer your own traveler", ephemeral=True)
+			user_data = get_user_data(inter.user.id)
+			user_data["ideas"] -= 10
+			try :
+				member = inter.guild.get_member(inter.user.id)
+				assert member
+				await member.timeout(dt.timedelta(minutes=0.1), reason="haha mskn")
+			except : 
+				user_data["ideas"] -= 10
+			upd_data(user_data, f"games/users/{inter.user.id}")
+			return False
+		
 		E = discord.Embed(title="Correct!", color=discord.Color.green())
 		E.set_thumbnail(url=photo)
 
@@ -348,6 +379,20 @@ async def traveler(*, bot: commands.Bot):
 		await inter.followup.send(inter.user.mention, embed=E)
 
 	async def incorrect(inter:discord.Interaction):
+		if inter.user.name == creator:
+			assert inter.guild
+			await inter.followup.send("You can't answer your own traveler", ephemeral=True)
+			user_data = get_user_data(inter.user.id)
+			user_data["ideas"] -= 10
+			try :
+				member = inter.guild.get_member(inter.user.id)
+				assert member
+				await member.timeout(dt.timedelta(minutes=0.1), reason="haha mskn")
+			except : 
+				user_data["ideas"] -= 10
+			upd_data(user_data, f"games/users/{inter.user.id}")
+			print(2)
+			return False
 		E = discord.Embed(title="Incorrect!", color=discord.Color.red())
 		E.set_thumbnail(url=photo)
 
@@ -362,8 +407,6 @@ async def traveler(*, bot: commands.Bot):
 
 			double_collect_value = get_value(user_data)*2
 			value = get_value(user_data)*(-2)
-			
-		
 		
 		if user_data["roses"]<0 and not traveler:
 			E.description += f"You're already in debt so the robber didn't take you anything"
@@ -402,19 +445,21 @@ async def traveler(*, bot: commands.Bot):
 			else:
 				if question_type == "boolean":
 					if correct_answer.upper() == self.label:
-						await correct(inter)
+						await correct(inter) 
 					else:
 						await incorrect(inter)
 
 				else:
+					print(self.label)
 					if str(correct_answer_index+1) == self.label:
 						await correct(inter)
 					else:
 						await incorrect(inter)
 			if fail_next:
 				await inter.followup.send("You had 100% chances of losing today... ", ephemeral=True)
-			if isinstance(self.parent_view.message, discord.Message):
-				await self.parent_view.message.delete()
+			if difficulty != "Random" or inter.user.name != creator:
+				if isinstance(self.parent_view.message, discord.Message):
+					await self.parent_view.message.delete()
 			self.parent_view.stop()
 
 	class B_choices(discord.ui.View):

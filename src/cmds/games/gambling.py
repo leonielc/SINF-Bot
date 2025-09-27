@@ -1,5 +1,5 @@
 import discord 
-from discord import app_commands
+from discord import app_commands, ui
 from discord.ext import commands, tasks
 
 import random
@@ -7,144 +7,12 @@ import datetime as dt
 from typing import Literal
 import asyncio
 
-from utils import get_data, upd_data, GetLogLink, get_amount, is_cutie, UnexpectedValue, get_value, random_avatar, get_belgian_time
-from cmds.games.games import Games, traveler
+from settings import BOT_CHANNEL_ID
+from utils import get_data, upd_data, GetLogLink, get_amount, is_cutie, UnexpectedValue, get_value, random_avatar, get_belgian_time, get_user_data
 
-
-
-
-class GamblingHelper():
+class GamblingHelper:
 	def __init__(self, bot:commands.Bot):
 		self.bot : commands.Bot = bot
-
-	async def create_next_traveler(self, inter:discord.Interaction):
-		E = discord.Embed(title="Create next traveler", color=discord.Color.purple())
-		E.set_author(name=inter.user.name, icon_url=await GetLogLink(self.bot,str(inter.user.display_avatar)))
-		E.set_thumbnail(url="https://media.discordapp.net/attachments/709313685226782751/1128082089397465218/thonking.gif")
-
-		# store the question and its answers
-		question = {}
-
-		# create modal that write the question
-		class GetQuestion(discord.ui.Modal):
-			def __init__(self, message:discord.Message, question_type:Literal["True or False", "MCQ"]):
-				self.message = message
-				self.question_type = question_type
-				super().__init__(title="Create the next traveler!")
-			test = discord.ui.TextInput(label="Question", default='1', min_length=1, max_length=150)
-			print(test)
-
-					
-			async def on_submit(self, inter2: discord.Interaction):
-				question[inter2.user.id] = question
-
-		# create the view that asks users to bet
-		class FirstView(discord.ui.View):
-			def __init__(self, timeout:float):
-				super().__init__(timeout=timeout)
-				self.message_id : int
-
-			@discord.ui.button(label="True or False",style=discord.ButtonStyle.success)
-			async def True_False(self, inter2: discord.Interaction, _: discord.ui.Button):
-				if question.values()!=[]:
-					return await inter2.followup.send(f'You already ', ephemeral=True)
-				
-				# fetch the message back (>15 mins) (time)
-				if not isinstance(inter2.channel, discord.TextChannel):
-					raise UnexpectedValue("inter2.channel is not a discord.TextChannel")
-				
-				message = await inter2.channel.fetch_message(self.message_id)
-
-				await inter2.response.send_modal(GetQuestion(message,"True or False"))
-				
-
-				# update timeout so it stays on time
-				self.timeout = time_ends - int(dt.datetime.now().timestamp())
-
-			@discord.ui.button(label="MCQ (4 possibilities)",style=discord.ButtonStyle.danger)
-			async def MCQ(self, inter2: discord.Interaction, _: discord.ui.Button):
-				if question.values()!=[]:
-					return await inter2.followup.send("Cannot interact with this message", ephemeral=True)
-
-				# fetch the message back (>15 mins)
-				if not isinstance(inter2.channel, discord.TextChannel):
-					raise UnexpectedValue("inter2.channel is not a discord.TextChannel")
-				
-				message = await inter2.channel.fetch_message(self.message_id)
-
-				await inter2.response.send_modal(GetQuestion(message, "MCQ"))
-
-				# update timeout so it stays on time
-				self.timeout = time_ends - int(dt.datetime.now().timestamp())
-
-		# +2 for the time it takes to send the message
-		time_ends = int(dt.datetime.now().timestamp()) + 300 + 2
-		left = time_ends - int(dt.datetime.now().timestamp())
-
-		firstView = FirstView(left)
-
-		message = await inter.followup.send(f"<t:{time_ends}:R>", embed=E,view=firstView)
-
-		if not isinstance(message, discord.Message):
-			raise UnexpectedValue("message is not a discord.Message")
-		
-		firstView.message_id = message.id
-
-		await firstView.wait()
-
-		# fetch the message back (>15 mins)
-		if not isinstance(inter.channel, discord.TextChannel):
-			raise UnexpectedValue("channel is not a discord.TextChannel")
-
-		E = discord.Embed(title="Roulette", color=discord.Color.gold())
-		E.description = f"Traveler set. It's coming..."
-
-	async def change_next_method(self, inter : discord.Interaction, bet : str, gambling_func):
-		gambling_funcs = ["roll", "flip", "ladder"]
-		gambling_funcs.remove(gambling_func.__name__)
-		choice = random.choice(gambling_funcs)
-		if choice=="ladder":
-			await self.ladder(inter, bet)
-		elif choice == "flip":
-			guess : Literal["heads", "tails"] = random.choice(["heads", "tails"])
-			await self.flip(inter, bet, guess)
-		elif choice == "roll":
-			await self.roll(inter, bet)
-
-	async def change_next_gain(self, E : discord.Embed, inter:discord.Interaction, multiplicator : float, user_data : dict):
-		if "next_gain_x3" in user_data["effects"]:
-			multiplicator = 3
-			user_data["effects"].remove("next_gain_x3")
-			user_data["effects"].remove("next_gain")
-			E.color = discord.Color.purple()
-			E.description = "Wow! You tripled your gain!"
-			await inter.followup.send(embed=E)
-
-		elif "next_gain_/3" in user_data["effects"]:
-			multiplicator = 1/3
-			user_data["effects"].remove("next_gain_/3")
-			user_data["effects"].remove("next_gain")
-			E.color = discord.Color.purple()
-			E.description = "Haha, your gain was divided by three!"
-			await inter.followup.send(embed=E)
-
-		elif "next_gain_x10" in user_data["effects"]:
-			multiplicator = 10
-			user_data["effects"].remove("next_gain_x10")
-			user_data["effects"].remove("next_gain")
-			E.color = discord.Color.purple()
-			E.description = "Wow! Your gain has grown by a factor 10!"
-			await inter.followup.send(embed=E)
-			
-		elif "next_gain_/10" in user_data["effects"]:
-			multiplicator = 1/10
-			user_data["effects"].remove("next_gain_/10")
-			user_data["effects"].remove("next_gain")
-			E.color = discord.Color.purple()
-			E.description = "Haha, your gain was divided by ten!"
-			await inter.followup.send(embed=E)
-
-		return multiplicator
 	
 	async def embed(self, inter : discord.Interaction, E : discord.Embed):
 		url = random_avatar()
@@ -205,6 +73,51 @@ class GamblingHelper():
 
 		return E, user_data
 
+	async def change_next_method(self, inter : discord.Interaction, bet : str, gambling_func):
+		gambling_funcs = ["roll", "flip", "ladder"]
+		gambling_funcs.remove(gambling_func.__name__)
+		choice = random.choice(gambling_funcs)
+		if choice=="ladder":
+			await self.ladder(inter, bet)
+		elif choice == "flip":
+			guess : Literal["heads", "tails"] = random.choice(["heads", "tails"])
+			await self.flip(inter, bet, guess)
+		elif choice == "roll":
+			await self.roll(inter, bet)
+
+	async def change_next_gain(self, E : discord.Embed, inter:discord.Interaction, multiplicator : float, user_data : dict):
+		if "next_gain_x3" in user_data["effects"]:
+			multiplicator = 3
+			user_data["effects"].remove("next_gain_x3")
+			user_data["effects"].remove("next_gain")
+			E.color = discord.Color.purple()
+			E.description = "Wow! You tripled your gain!"
+			await inter.followup.send(embed=E)
+
+		elif "next_gain_/3" in user_data["effects"]:
+			multiplicator = 1/3
+			user_data["effects"].remove("next_gain_/3")
+			user_data["effects"].remove("next_gain")
+			E.color = discord.Color.purple()
+			E.description = "Haha, your gain was divided by three!"
+			await inter.followup.send(embed=E)
+
+		elif "next_gain_x10" in user_data["effects"]:
+			multiplicator = 10
+			user_data["effects"].remove("next_gain_x10")
+			user_data["effects"].remove("next_gain")
+			E.color = discord.Color.purple()
+			E.description = "Wow! Your gain has grown by a factor 10!"
+			await inter.followup.send(embed=E)
+			
+		elif "next_gain_/10" in user_data["effects"]:
+			multiplicator = 1/10
+			user_data["effects"].remove("next_gain_/10")
+			user_data["effects"].remove("next_gain")
+			E.color = discord.Color.purple()
+			E.description = "Haha, your gain was divided by ten!"
+			await inter.followup.send(embed=E)
+		return multiplicator
 
 	async def roll(self, inter:discord.Interaction, bet:str):
 		try:
@@ -218,6 +131,7 @@ class GamblingHelper():
 			return await inter.followup.send(embed=E)
 		
 		r = random.randint(1,100)
+		roulette = False
 		for element in user_data["effects"]:
 			if "gain" or "bet" in element:
 				roulette = True
@@ -366,8 +280,6 @@ class GamblingHelper():
 
 		await inter.followup.send(embed=E)
 
-
-
 	async def ladder(self, inter:discord.Interaction, bet:str):
 		try:
 			await inter.response.defer()
@@ -378,7 +290,8 @@ class GamblingHelper():
 		# if the already has a description, an issue was found
 		if E.description is not None:
 			return await inter.followup.send(embed=E)
-		
+			
+		roulette = False
 		for element in user_data["effects"]:
 			if "gain" or "bet" in element:
 				roulette = True
@@ -403,10 +316,6 @@ class GamblingHelper():
 		elif "chances_next_bet_/2" in user_data["effects"]:
 			user_data["effects"].remove("chances_next_bet_/2")
 			divide=True
-
-		
-		
-		
 		if double:
 			r = max(random.randint(1,8),random.randint(1,8))
 		elif divide:
@@ -416,7 +325,7 @@ class GamblingHelper():
 			E.color = discord.Color.red()
 		if r == 5: 
 			E.color = discord.Color.blurple()
-		if 8>r>5:
+		if 8 > r > 5:
 			E.color = discord.Color.green()
 		if r == 8:
 			E.color = discord.Color.gold()
@@ -455,276 +364,6 @@ class GamblingHelper():
 
 		await inter.followup.send(embed=E)
 
-	async def roulette(self, inter:discord.Interaction, other_user:discord.Member):
-		assert inter.guild
-		
-		has_been_answered = False
-
-
-		E, user_data = await self.check(inter)
-
-		if user_data["candies"]<1 and user_data["free_sunday_roll"] == 0:
-			E.description = f"{inter.user.mention}, You don't have enough 🍬"
-			E.color = discord.Color.red()
-			return await inter.response.send_message(embed=E)
-		
-		try :
-			other_user_data : dict = get_data(f"games/users/{other_user.id}")
-		except :
-			return await inter.response.send_message("This user doesn't have an account", ephemeral=True)
-		
-		if other_user_data==user_data:
-			return await inter.response.send_message("You can't choose yourself", ephemeral=True)
-		
-		url = random_avatar()
-		if inter.user.avatar:
-			url = inter.user.avatar.url
-		E.set_author(name=inter.user.display_name, url = await GetLogLink(self.bot, url))
-		E.set_footer(text="Roulette by Scylla and Ceisal")
-		E = discord.Embed(title="Roulette")
-
-		if user_data["free_sunday_roll"] == 0:
-			E.description = f"{inter.user.mention} used the roulette! It costs only one 🍬."
-			E.color = discord.Color.purple()
-
-			await inter.response.send_message(embed = E)
-			upd_data(user_data["candies"]-1, f"games/users/{inter.user.id}/candies")
-
-		else:
-			E.description = f"{inter.user.mention} used the roulette! Free sunday roll!"
-			E.color = discord.Color.purple()
-
-			await inter.response.send_message(embed = E)
-			upd_data(0, f"games/users/{inter.user.id}/free_sunday_roll")
-
-		consequences = {
-			"level_up" : 2,  #ça marche
-			"level_down" : 2, #ça marche
-			"tech_up" : 5, #ça marche
-			"tech_down" : 5, #ça marche
-			"timeout_someone" : 5, #ça marche
-			"timeout_myself" : 7.5, #ça marche
-			"next_bet_all" : 5, #ça marche
-			"wordle_guess_reduced" : 5, #ça marche
-			#local_sum = 31.5
-			"traveler_spawn" : 5.5, # ça marche
-			"create_next_traveler" : 8, # je garde ça pour plus tard
-			"fail_next_traveler" : 5, # ça marche
-			#local_sum = 18.5
-			"chances_next_bet_x2" : 4, # ça marche 
-			"chances_next_bet_/2" : 4, # ça marche
-			"next_gain_x3" : 4, # ça marche
-			"next_gain_/3" : 4, # ça marche
-			"next_bet_someone_else" : 3, # ça marche
-			"steal_collect_x2" : 3, # ça marche
-			"choose_name_level_up" : 3, # ça marche 
-			"choose_name_level_down" : 3, # ça marche
-			"next_collect_x3" : 3, # ça marche
-			"next_gain_x10" : 2, # ça marche
-			"next_gain_/10" : 2, # ça marche
-			"change_bet_method" : 5, # ça marche
-			"free_flip_when_collect" : 5, # ça marche
-			"bank_double": 2, # ça marche
-			"bank_robbery" : 2, # ça marche
-			#local_sum = 46
-			#total_sum = 96
-		}
-
-		#Modify this line to make tests.
-		cons = random.choices(list(consequences.keys()), list(consequences.values()))[0]
-		cons = "create_next_traveler"
-		print(cons) 
-
-
-		has_been_answered = False
-
-		
-		url = random_avatar()
-
-		if inter.user.avatar:
-			url = inter.user.avatar.url
-		E.set_author(name=inter.user.display_name, url = await GetLogLink(self.bot, url))
-		E.set_footer(text="Roulette by Scylla and Ceisal")
-		E = discord.Embed(title="Roulette")
-		if cons=="level_up":
-			has_been_answered = True
-			user_data["level"]+=1
-			upd_data(user_data["level"], f"games/users/{inter.user.id}/level")
-			E.colour = discord.Colour.green()
-			E.description = f"Congratulations you leveled-up to level **{user_data['level']}**!"
-			await inter.followup.send(embed=E)
-			
-		elif cons=="level_down":
-			has_been_answered = True
-			if user_data["level"]>0:
-				user_data["level"]-=1
-				upd_data(user_data["level"], f"games/users/{inter.user.id}/level")
-				E.colour = discord.Colour.red()
-				E.description = f"Haha noob you leveled-down to level **{user_data['level']}**"
-				await inter.followup.send(embed=E)
-			else:
-				E.colour = discord.Colour.red()
-				E.description = f"You didn't level down cause you're already level 0..."
-				await inter.followup.send(embed=E)
-
-		elif cons=="tech_up":
-			has_been_answered = True
-			user_data["tech"]+=1
-			upd_data(user_data["tech"], f"games/users/{inter.user.id}/tech")
-			E.colour = discord.Colour.purple()
-			E.description = f"Congratulations you upgraded your tech to level **{user_data['tech']}**:gear:!"
-			await inter.followup.send(embed=E)
-
-		elif cons=="tech_down":
-			has_been_answered = True
-			if user_data["tech"]>0:
-				user_data["tech"]-=1
-				upd_data(user_data["tech"], f"games/users/{inter.user.id}/tech")
-				E.colour = discord.Colour.purple()
-				E.description = f"Haha noob you downgraded your tech to level **{user_data['tech']}**:gear:!"
-				await inter.followup.send(embed=E)
-			else:
-				E.colour = discord.Colour.purple()
-				E.description = f"You didn't tech level down cause you're already level 0..."
-				await inter.followup.send(embed=E)
-
-		elif cons=="timeout_someone": #inter user -> discord member 
-			has_been_answered = True
-			try :
-				await other_user.timeout(dt.timedelta(minutes=30), reason="haha mskn")
-			except : 
-				member = inter.guild.get_member(inter.user.id)
-				assert member
-				await member.timeout(dt.timedelta(minutes=30), reason="haha mskn encore plus")
-				E.description = f"{inter.user.mention} tried to timeout {other_user.mention} and got karmadd"
-				await inter.followup.send(embed=E)
-				return
-			
-			E.colour = discord.Colour.green()
-			E.description = f"{inter.user.mention} got {other_user.mention} timed out! I see some beef coming." 
-			await inter.followup.send(embed=E)
-
-		elif cons == "traveler_spawn":
-			has_been_answered = True
-			traveler.start(bot=self.bot)
-			try :
-				await other_user.timeout(dt.timedelta(minutes=30), reason="haha mskn")
-			except : 
-				E.description = f"{inter.user.mention} tried to timeout {other_user.mention} and got karmadd"
-			E.colour = discord.Colour.purple()
-			E.description = f"Look, there, a traveler!" 
-			await inter.followup.send(embed=E)
-		
-		elif cons=="timeout_myself":
-			has_been_answered = True
-			member = inter.guild.get_member(inter.user.id)
-			assert member #j'ai un petit pb avec modal ça marche pas
-			await member.timeout(dt.timedelta(minutes=60), reason="haha mskn encore plus")
-			E.description = f"{inter.user.mention} got themselves timed out. See you later!" 
-			await inter.followup.send(embed=E)
-
-		elif cons == "bank_robbery":
-			has_been_answered = True
-			robber_money = get_data(f"games/users/{inter.user.id}/bank/roses")
-			robber_money += get_data(f"games/robber_total")
-			upd_data(0, f"games/users/{inter.user.id}/bank/roses")
-			upd_data(robber_money, "games/robber_total")
-			E.colour = discord.Colour.purple()
-			E.description = f"{inter.user.mention} your bank got robbed.\nThe Robber got all the money you put in there."
-			await inter.followup.send(embed=E)
-
-		elif cons == "bank_double":
-			has_been_answered = True
-			double_money = get_data(f"games/users/{inter.user.id}/bank/roses")
-			double_money+=double_money
-			upd_data(double_money, f"games/users/{inter.user.id}/bank/roses")
-			E.colour = discord.Colour.purple()
-			E.description = f"{inter.user.mention} your bank got multiplied by two!"
-			await inter.followup.send(embed=E)
-
-		elif cons == "steal_collect_x2":
-			has_been_answered = True
-			value = get_value(other_user_data)*2
-			user_data["roses"] += value
-			other_user_data["roses"] -= value
-			upd_data(other_user_data["roses"], f"games/users/{other_user.id}/roses")
-			upd_data(user_data["roses"], f"games/users/{inter.user.id}/roses")
-
-			E.colour = discord.Colour.purple()
-			E.description = f"{inter.user.mention} stole two collects from {other_user.mention}!"
-			await inter.followup.send(embed=E)
-
-		elif cons=="choose_name_level_up":
-			has_been_answered = True
-			other_user_data["level"]+=1
-			upd_data(other_user_data["level"], f"games/users/{other_user.id}/level")
-			E.colour = discord.Colour.purple()
-			E.description = f"Congratulations you leveled-up {other_user.mention} to level **{other_user_data['level']}**!"
-			await inter.followup.send(embed=E)
-
-		elif cons=="choose_name_level_down":
-			has_been_answered = True
-			other_user_data["level"]-=1
-			upd_data(other_user_data["level"], f"games/users/{other_user.id}/level")
-			E.colour = discord.Colour.purple()
-			E.description = f"Haha, you leveled-down {other_user.mention} to level **{other_user_data['level']}**!"
-			await inter.followup.send(embed=E)
-
-		elif cons=="next_bet_all":
-			user_data["effects"].append("next_bet_all")
-
-
-		elif cons=="wordle_guess_reduced":
-			user_data["effects"].append("wordle_guess_reduced")
-
-		elif cons == "next_gain_x3":
-			user_data["effects"].append("next_gain_x3")
-			user_data["effects"].append("next_gain")
-
-		elif cons == "next_gain_/3":
-			user_data["effects"].append("next_gain_/3")
-			user_data["effects"].append("next_gain")
-
-		elif cons == "next_gain_x10":
-			user_data["effects"].append("next_gain_x10")
-			user_data["effects"].append("next_gain")
-
-		elif cons == "next_gain_/10":
-			user_data["effects"].append("next_gain_/10")
-			user_data["effects"].append("next_gain")
-
-		elif cons == "next_bet_someone_else":
-			other_user_data["effects"].append("next_bet_all")
-			upd_data(other_user_data["effects"], f"games/users/{other_user.id}/effects")
-
-		elif cons == "chances_next_bet_x2":
-			user_data["effects"].append("chances_next_bet_x2")
-
-		elif cons == "chances_next_bet_/2":
-			user_data["effects"].append("chances_next_bet_/2")
-
-		elif cons == "fail_next_traveler":
-			user_data["effects"].append("fail_next_traveler")
-
-		elif cons == "change_bet_method":
-			user_data["effects"].append("change_bet_method")
-
-		elif cons == "free_flip_when_collect":
-			user_data["effects"].append("free_flip_when_collect")
-
-		elif cons == "next_collect_x3":
-			user_data["effects"].append("next_collect_x3")
-			
-		elif cons == "create_next_traveler":
-			print("Start")
-			await self.create_next_traveler(inter)
-			print("Done")
-
-		
-		if not has_been_answered:
-			await inter.followup.send("A random effect has been applied to one of you, wait and see...", ephemeral=True)
-
-		upd_data(user_data["effects"], f"games/users/{inter.user.id}/effects")
 class Gambling(commands.Cog):
 	def __init__(self,bot):
 		self.bot : commands.Bot = bot
@@ -736,6 +375,7 @@ class Gambling(commands.Cog):
 	@app_commands.describe(bet="The amount to bet")
 	async def roll(self, inter:discord.Interaction, bet:str):
 		await self.GH.roll(inter, bet)
+
 	@app_commands.command(description="Flips a coin")
 	@app_commands.checks.cooldown(1, 1, key=lambda i: (i.guild_id, i.user.id))
 	@app_commands.guild_only()
@@ -749,29 +389,6 @@ class Gambling(commands.Cog):
 	@app_commands.describe(bet="The amount to bet")
 	async def ladder(self, inter:discord.Interaction, bet:str):
 		await self.GH.ladder(inter, bet)
-	
-	@app_commands.command(description="Spins the wheel")
-	@app_commands.checks.cooldown(1, 1, key=lambda i: (i.guild_id, i.user.id))
-	@app_commands.guild_only()
-	async def roulette(self, inter:discord.Interaction, other_user:discord.Member):
-		await self.GH.roulette(inter, other_user)
 
-@tasks.loop()
-async def free_sunday_roll(bot:commands.Bot) -> None:
-	#Je sais pas comment on fait ça j'ai rien fait
-
-	now = get_belgian_time()
-	tomorrow = now + dt.timedelta(days=1)
-
-	date = dt.datetime(tomorrow.year, tomorrow.month, tomorrow.day)
-
-	sleep = (date - now).total_seconds()
-
-
-	await asyncio.sleep(sleep)
-
-	for user_id in get_data("games/users").keys():
-		upd_data(1, f"games/users/{user_id}/free_sunday_roll")
-	#Il faut aussi remettre à 0 le dimanche soir
 async def setup(bot:commands.Bot):
 	await bot.add_cog(Gambling(bot))
