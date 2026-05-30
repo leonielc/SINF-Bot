@@ -160,14 +160,14 @@ class Roulette:
             "tech_up_other_user": 4.5, 
             "free_roulette": 5.0,   
             "next_gain_x3_other" : 2.0,
-            "next_gain_x10_other" : 1.5,
+            "next_gain_x10_other" : 2,
             "chances_next_bet_x2_other" : 1.5,
 
             #negative other user consequences
             "choose_name_level_down": 2.0,
             "tech_down_other_user": 3.5, 
             "next_gain_/3_other" : 1.5,
-            "next_gain_/10_other" : 1.5,
+            "next_gain_/10_other" : 1,
             "chances_next_bet_/2_other" : 1.5,
 
             #other consequences
