@@ -427,7 +427,7 @@
         "todays_word_ge": "blute",
         "users": {
             "411881842439094272": {
-                "level": 13,
+                "level": 14,
                 "timely": 1778372315,
                 "roses": 228,
                 "candies": 1,
@@ -467,12 +467,12 @@
                 "has_got_daily_traveler": false
             },
             "627431499960156161": {
-                "level": 13,
+                "level": 12,
                 "timely": 1778400175,
                 "roses": 5612,
-                "candies": 0,
+                "candies": 996,
                 "ideas": 15,
-                "tech": 7,
+                "tech": 6,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
@@ -497,6 +497,7 @@
                 },
                 "free_sunday_roll": 0,
                 "effects": [
+                    "change_bet_method",
                     "change_bet_method"
                 ],
                 "lotto_guess": 13,
