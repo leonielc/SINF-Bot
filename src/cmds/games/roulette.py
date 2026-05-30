@@ -379,7 +379,6 @@ class Roulette:
         elif cons == "free_roulette":
             has_been_answered = True
             other_user_data["effects"].append("free_roulette")
-            upd_data(other_user_data["effects"], f"games/users/{other_user.id}/effects")
             E.colour = discord.Colour.purple()
             E.description = f"You won a free roulette spin for {other_user.mention}!"
             await inter.followup.send(embed=E)
