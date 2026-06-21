@@ -399,32 +399,42 @@ class Help(commands.Cog):
 					E_1.add_field(name = "Doubles your bank", value = "```2.5%```")
 					E_1.add_field(name = "Multiplies your next gain by 3", value = "```5%```")
 					E_1.add_field(name = "Multiplies your next gain by 10", value = "```2.5%```")
-					E_1.add_field(name = "Multiplies your next collect by 3", value = "```6%```")
-					E_1.add_field(name = f"Flips the value of your collect after your next {collect.mention}\*", value = "```6%```")
-					E_1.add_field(name = "Doubles the chances of winning of your next bet", value = "```5%```")
+					E_1.add_field(name = "Multiplies your next collect by 3", value = "```5%```")
+					E_1.add_field(name = f"Flips the value of your collect after your next {collect.mention}\*", value = "```5%```")
+					E_1.add_field(name = "Doubles the chances of winning of your next bet", value = "```4.5%```")
 					E_1.set_footer(text="* No amount of roses is deduced from your account")
 
 					E_2 = discord.Embed(title = "Negative consequences (user)")
-					E_2.add_field(name = "Level down", value = "```2.5%```")
-					E_2.add_field(name = "Tech down", value = "```4%```")
-					E_2.add_field(name = "Your bank get robbed", value = "```3.5%```")
-					E_2.add_field(name = "Divides your next gain by 3", value = "```4.5%```")
-					E_2.add_field(name = "Divides your next gain by 10", value = "```2%```")
-					E_2.add_field(name = "Fails your next correctly answered traveler", value = "```4%```")
-					E_2.add_field(name = "Chances of winning divided by 2 on your next bet", value = "```5%```")
+					E_2.add_field(name = "Level down", value = "```2%```")
+					E_2.add_field(name = "Tech down", value = "```3.5%```")
+					E_2.add_field(name = "Your bank get robbed", value = "```3%```")
+					E_2.add_field(name = "Divides your next gain by 3", value = "```4%```")
+					E_2.add_field(name = "Divides your next gain by 10", value = "```1.5%```")
+					E_2.add_field(name = "Fails your next correctly answered traveler", value = "```3.5%```")
+					E_2.add_field(name = "Chances of winning divided by 2 on your next bet", value = "```4.5%```")
 
-					E_3 = discord.Embed(title = "Consequences (other user)")
-					E_3.add_field(name = "Level up", value = "```3%```")
-					E_3.add_field(name = "Level down", value = "```2.5%```")
-					E_3.add_field(name = "Tech up", value = "```5%```")
-					E_3.add_field(name = "Tech down", value = "```4%```")
-					E_3.add_field(name = "Next bet all", value = "```4%```")
-					E_3.add_field(name = "Free roulette", value = "```6%```")
+					E_3 = discord.Embed(title = "Positive consequences (other user)")
+					E_3.add_field(name = "Level up", value = "```2.5%```")
+					E_3.add_field(name = "Tech up", value = "```4.5%```")
+					E_3.add_field(name = "Free roulette", value = "```5%```")
+					E_3.add_field(name = "Multiplies your next gain by 3", value = "```2%```")
+					E_3.add_field(name = "Multiplies your next gain by 10", value = "```1.5%```")
+					E_3.add_field(name = "Doubles the chances of winning of your next bet", value = "```1.5%```")
 
-					E_4 = discord.Embed(title = "Miscellaneous")
-					E_4.add_field(name = "Traveler spawn", value = "```6.5%```")
-					E_4.add_field(name = "Changes bet method (user)", value = "```6%```")
-					E_4.add_field(name = "Next bet all (user)", value = "```4%```")
+					E_4 = discord.Embed(title = "Negative Consequences (other user)")
+					E_4.add_field(name = "Level down", value = "```2%```")
+					E_4.add_field(name = "Tech down", value = "```3.5%```")
+					E_4.add_field(name = "Divides your next gain by 3", value = "```2%```")
+					E_4.add_field(name = "Divides your next gain by 10", value = "```1%```")
+					E_2.add_field(name = "Chances of winning divided by 2 on your next bet", value = "```1.5%```")
+
+					E_5 = discord.Embed(title = "Miscellaneous")
+					E_5.add_field(name = "Traveler spawn", value = "```5.5%```")
+					E_5.add_field(name = "Changes bet method (user)", value = "```5%```")
+					E_5.add_field(name = "Changes bet method (other user)", value = "```3.5%```")
+					E_5.add_field(name = "Next bet all (user)", value = "```2.5%```")
+					E_5.add_field(name = "Next bet all (other user)", value = "```3.5%```")
+
 
 					class Roulette_help(discord.ui.View):
 						def __init__(self, timeout=60):
@@ -453,7 +463,11 @@ class Help(commands.Cog):
 						@discord.ui.button(label="4",style=discord.ButtonStyle.blurple)
 						async def page_4(self, inter2: discord.Interaction, _: discord.ui.Button):
 							await inter2.response.edit_message(embed=E_4)
-
+						
+						@discord.ui.button(label="5",style=discord.ButtonStyle.blurple)
+						async def page_5(self, inter2: discord.Interaction, _: discord.ui.Button):
+							await inter2.response.edit_message(embed=E_5)
+					
 						async def on_timeout(self):
 							for item in self.children:
 								if isinstance(item, discord.ui.Button):

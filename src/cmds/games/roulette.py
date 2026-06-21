@@ -48,7 +48,7 @@ class Roulette:
                 self.stop()
 
         #Not enough candies and no free spin
-        if user_data["candies"]<1 and user_data["free_sunday_roll"] == 0 and "effects" in user_data:
+        if user_data["candies"]<1 and user_data["free_sunday_roll"] == 0 and "never_played" not in user_data["effects"]:
             E.description = f"{inter.user.mention}, You don't have enough 🍬"
             E.color = discord.Color.red()
             return await inter.followup.send(embed=E)
@@ -142,31 +142,40 @@ class Roulette:
             "bank_double": 2.5, 
             "next_gain_x3": 5.0,       
             "next_gain_x10": 2.5, 
-            "next_collect_x3": 6.0, 
-            "free_flip_when_collect": 6.0,
-            "chances_next_bet_x2": 5.0,
+            "next_collect_x3": 5.0, 
+            "free_flip_when_collect": 5.0,
+            "chances_next_bet_x2": 4.5,
 
             #negative consequences (user)
-            "level_down": 2.5,   
-            "tech_down": 4.0,          
-            "bank_robbery": 3.5,
-            "next_gain_/3": 4.5,
-            "next_gain_/10": 2.0,
-            "fail_next_traveler": 4.0,
-            "chances_next_bet_/2": 5.0,
+            "level_down": 2.0,   
+            "tech_down": 3.5,          
+            "bank_robbery": 3.0,
+            "next_gain_/3": 4.0,
+            "next_gain_/10": 1.5,
+            "fail_next_traveler": 3.5,
+            "chances_next_bet_/2": 4.5,
 
-            #other user consequences
-            "choose_name_level_up": 3.0,
-            "choose_name_level_down": 2.5,
-            "tech_up_other_user": 5.0, 
-            "tech_down_other_user": 4.0, 
-            "next_bet_someone_else": 4.0,
-            "free_roulette": 6.0,   
+            #positive other user consequences
+            "choose_name_level_up": 2.5,
+            "tech_up_other_user": 4.5, 
+            "free_roulette": 5.0,   
+            "next_gain_x3_other" : 2.0,
+            "next_gain_x10_other" : 2,
+            "chances_next_bet_x2_other" : 1.5,
+
+            #negative other user consequences
+            "choose_name_level_down": 2.0,
+            "tech_down_other_user": 3.5, 
+            "next_gain_/3_other" : 1.5,
+            "next_gain_/10_other" : 1,
+            "chances_next_bet_/2_other" : 1.5,
 
             #other consequences
-            "traveler_spawn": 6.5,  
-            "change_bet_method": 6.0,
-            "next_bet_all": 4.0
+            "traveler_spawn": 5.5,  
+            "change_bet_method": 5.0,
+            "next_bet_all": 3.5,
+            "change_bet_method_other" : 2.5,
+            "next_bet_someone_else": 3.5,
         }
 
         cons = random.choices(list(consequences.keys()), list(consequences.values()))[0]
@@ -321,9 +330,33 @@ class Roulette:
             user_data["effects"].append("next_gain_/10")
             user_data["effects"].append("next_gain")
 
+        elif cons == "next_gain_x3_other":
+            other_user_data["effects"].append("next_gain_x3")
+            other_user_data["effects"].append("next_gain")
+
+        elif cons == "next_gain_/3_other":
+            other_user_data["effects"].append("next_gain_/3")
+            other_user_data["effects"].append("next_gain")
+
+        elif cons == "next_gain_x10_other":
+            other_user_data["effects"].append("next_gain_x10")
+            other_user_data["effects"].append("next_gain")
+
+        elif cons == "next_gain_/10_other":
+            other_user_data["effects"].append("next_gain_/10")
+            other_user_data["effects"].append("next_gain")
+
+        elif cons == "chances_next_bet_x2_other":
+            other_user_data["effects"].append("chances_next_bet_x2")
+
+        elif cons == "chances_next_bet_/2_other":
+            other_user_data["effects"].append("chances_next_bet_/2")
+
+        elif cons == "change_bet_method_other":
+            other_user_data["effects"].append("change_bet_method")
+
         elif cons == "next_bet_someone_else":
             other_user_data["effects"].append("next_bet_all")
-            upd_data(other_user_data["effects"], f"games/users/{other_user.id}/effects")
 
         elif cons == "chances_next_bet_x2":
             user_data["effects"].append("chances_next_bet_x2")
@@ -346,14 +379,14 @@ class Roulette:
         elif cons == "free_roulette":
             has_been_answered = True
             other_user_data["effects"].append("free_roulette")
-            upd_data(other_user_data["effects"], f"games/users/{other_user.id}/effects")
             E.colour = discord.Colour.purple()
             E.description = f"You won a free roulette spin for {other_user.mention}!"
             await inter.followup.send(embed=E)
 
         if not has_been_answered:
             await inter.followup.send("A random effect has been applied to one of you, wait and see")
-
+        
+        upd_data(other_user_data["effects"], f"games/users/{other_user.id}/effects")
         upd_data(user_data["effects"], f"games/users/{inter.user.id}/effects")
 
 
