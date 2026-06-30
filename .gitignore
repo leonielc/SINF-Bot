@@ -17,6 +17,7 @@ src/data/datasinf_save.json
 
 # ignore the venv folder
 venv/
+.venv
 
 # ignore test files / drafs
 testing.py

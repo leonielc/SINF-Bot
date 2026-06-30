@@ -12,16 +12,28 @@ import datetime as dt
 from settings import BOT_CHANNEL_ID
 from utils import log, get_data, upd_data, get_value, get_user_data, new_user, UserAccount
 
-class Games(commands.Cog):
+class Traveler(commands.Cog):
 	def __init__(self,bot):
 		self.bot : commands.Bot = bot
 
 		traveler_loop.start(bot=self.bot)
 
 async def traveler(*, bot_channel: discord.TextChannel):
-	# 17 science&nature, 18 computer, 19 maths, 22 geography, 24 politics, 27 animals
-	r = random.choice([17, 18, 19, 22, 24, 27])
-	url = f"https://opentdb.com/api.php?amount=1&category={r}"
+	# 9 general knowledge, 17 science&nature, 18 computer, 19 maths,
+	# 22 geography, 23 history, 25 arts, 27 animals, 30 gadgets
+	#? art en anglais est rude mais faut bien un peu de culture
+	# ?? comics mais pas fou, on a enlevé politic, mythologie&cartoon trop dur en anglais
+
+	categories	= [9, 17, 18, 19, 22, 23, 25, 27, 30]
+	pages		= [19, 12, 8, 4, 16, 17, 3, 4, 2]
+
+	# only use max weight so big cateries don't take the whole attention
+	MAX_WEIGHT = 8
+	weights = [p if p <= MAX_WEIGHT else MAX_WEIGHT for p in pages]
+
+	selected = random.choices(categories, weights=weights)[0]
+	
+	url = f"https://opentdb.com/api.php?amount=1&category={selected}"
 
 	response = requests.get(url)
 	data = response.json()
@@ -272,7 +284,7 @@ async def traveler(*, bot_channel: discord.TextChannel):
 async def traveler_loop(*, bot: commands.Bot):
 	# come back in 2 to 10 hours
 	random_time = random.randint(7200, 36000)
-	await asyncio.sleep(random_time)
+	#await asyncio.sleep(random_time)
 
 	# get the bot channel and make sure it is not none
 	bot_channel = await bot.fetch_channel(BOT_CHANNEL_ID)
@@ -281,4 +293,4 @@ async def traveler_loop(*, bot: commands.Bot):
 	await traveler(bot_channel=bot_channel)
 
 async def setup(bot:commands.Bot):
-	await bot.add_cog(Games(bot))
+	await bot.add_cog(Traveler(bot))

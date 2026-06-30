@@ -9,7 +9,7 @@ import asyncio
 
 from settings import BOT_CHANNEL_ID
 from utils import get_data, upd_data, GetLogLink, random_avatar, get_belgian_time, embed_roulette
-from cmds.games.games import traveler
+from cmds.games.traveler import traveler
 from cmds.games.gambling import GamblingHelper
 
 class Roulette:
