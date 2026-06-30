@@ -284,7 +284,7 @@ async def traveler(*, bot_channel: discord.TextChannel):
 async def traveler_loop(*, bot: commands.Bot):
 	# come back in 2 to 10 hours
 	random_time = random.randint(7200, 36000)
-	#await asyncio.sleep(random_time)
+	await asyncio.sleep(random_time)
 
 	# get the bot channel and make sure it is not none
 	bot_channel = await bot.fetch_channel(BOT_CHANNEL_ID)
