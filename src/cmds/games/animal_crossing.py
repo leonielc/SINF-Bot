@@ -224,8 +224,6 @@ class AnimalCrossing(commands.Cog):
 		try:
 			user_data : UserAccount = get_data(f"games/users/{user_id}")
 		except:
-			user_data = new_user()
-			upd_data(user_data, f"games/users/{inter.user.id}")
 			if user_id == inter.user.id:
 				return await inter.followup.send("You have no villagers yet! Use `/meet` to meet one!", ephemeral=True)
 			else:

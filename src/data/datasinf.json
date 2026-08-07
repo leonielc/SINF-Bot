@@ -419,23 +419,24 @@
             366975965601071104,
             290494427330510849,
             269210243093889028,
-            553163806600331284
+            553163806600331284,
+            183259368286978048
         ],
-        "robber_total": 1907,
-        "todays_word_en": "duchy",
-        "todays_word_fr": "homme",
-        "todays_word_sp": "rices",
-        "todays_word_ge": "huhns",
+        "robber_total": 0,
+        "todays_word_en": "omega",
+        "todays_word_fr": "basse",
+        "todays_word_sp": "zapeo",
+        "todays_word_ge": "marne",
         "users": {
             "411881842439094272": {
-                "level": 13,
-                "timely": 1779050636,
-                "roses": 4894,
-                "candies": 2,
-                "ideas": 22,
-                "tech": 7,
+                "level": 18,
+                "timely": 1782846167,
+                "roses": 1404,
+                "candies": 0,
+                "ideas": 51,
+                "tech": 8,
                 "bank": {
-                    "roses": -1,
+                    "roses": 10374,
                     "candies": 0,
                     "ideas": 0
                 },
@@ -457,25 +458,24 @@
                     "todays_w_results_shown": 0
                 },
                 "free_sunday_roll": 0,
-                "effects": [
-                    "fail_next_traveler"
-                ],
-                "lotto_guess": 8,
-                "villager_of_the_day": "Margie",
+                "effects": [],
+                "lotto_guess": -1,
+                "villager_of_the_day": "[STOP]",
                 "villagers": [
                     "Ribbot",
                     "Chrissy",
-                    "Kid Cat"
+                    "Kid Cat",
+                    "Jay"
                 ],
                 "has_got_daily_traveler": false
             },
             "627431499960156161": {
-                "level": 14,
-                "timely": 1779032413,
-                "roses": 5409,
-                "candies": 0,
-                "ideas": 35,
-                "tech": 7,
+                "level": 20,
+                "timely": 1782861893,
+                "roses": 1408,
+                "candies": 1,
+                "ideas": 49,
+                "tech": 8,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
@@ -501,36 +501,49 @@
                 "free_sunday_roll": 0,
                 "effects": [],
                 "lotto_guess": 13,
-                "villager_of_the_day": "[STOP]",
+                "villager_of_the_day": "Vivian",
                 "villagers": [
                     "Whitney",
                     "Ankha",
-                    "Mineru"
+                    "Mineru",
+                    "Kitty",
+                    "Blanche"
                 ],
                 "has_got_daily_traveler": false
             },
             "346945067975704577": {
-                "level": 16,
-                "timely": 1779034035,
-                "roses": 4531,
-                "candies": 1,
-                "ideas": 20,
-                "tech": 8,
+                "level": 21,
+                "timely": 1782839746,
+                "roses": 14250,
+                "candies": 4,
+                "ideas": 115,
+                "tech": 11,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
                     "ideas": 0
                 },
                 "achievements": [],
-                "wordle_en": {},
-                "wordle_fr": {},
+                "wordle_en": {
+                    "0splat": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5",
+                    "1mired": "\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5",
+                    "2gonch": "\ud83d\udfe8\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5",
+                    "3omega": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                },
+                "wordle_fr": {
+                    "0train": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5",
+                    "1poule": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "2bache": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "3badge": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "4basse": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                },
                 "wordle_sp": {},
                 "wordle_ge": {},
                 "wordle_stats_en": {
-                    "todays_w_results_shown": 0
+                    "todays_w_results_shown": 1
                 },
                 "wordle_stats_fr": {
-                    "todays_w_results_shown": 0
+                    "todays_w_results_shown": 1
                 },
                 "wordle_stats_sp": {
                     "todays_w_results_shown": 0
@@ -543,22 +556,23 @@
                     "chances_next_bet_x2"
                 ],
                 "lotto_guess": 5,
-                "villager_of_the_day": "Genji",
+                "villager_of_the_day": "[STOP]",
                 "villagers": [
-                    "Chief",
-                    "Skye",
                     "Tulin",
-                    "Ruby"
+                    "Rudy",
+                    "Raymond",
+                    "Cece",
+                    "Portia"
                 ],
-                "has_got_daily_traveler": true
+                "has_got_daily_traveler": false
             },
             "560155603574718475": {
-                "level": 19,
-                "timely": 1779035213,
-                "roses": 1779,
-                "candies": 0,
-                "ideas": 37,
-                "tech": 6,
+                "level": 23,
+                "timely": 1782880781,
+                "roses": 2056,
+                "candies": 1,
+                "ideas": 49,
+                "tech": 9,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
@@ -566,16 +580,17 @@
                 },
                 "achievements": [],
                 "wordle_en": {
-                    "0stare": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5",
-                    "1gonch": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe8",
-                    "2child": "\ud83d\udfe8\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8",
-                    "3duchy": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                    "0stare": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5\ud83d\udfe8",
+                    "1gonch": "\ud83d\udfe8\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5",
+                    "2omega": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
                 },
                 "wordle_fr": {
                     "0livre": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
-                    "1saune": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
-                    "2chose": "\ud83d\udfe5\ud83d\udfe8\ud83d\udfe8\ud83d\udfe5\ud83d\udfe9",
-                    "3homme": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                    "1pouce": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "2femme": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "3bande": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "4batte": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe5\ud83d\udfe5\ud83d\udfe9",
+                    "5basse": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
                 },
                 "wordle_sp": {},
                 "wordle_ge": {},
@@ -593,20 +608,21 @@
                 },
                 "free_sunday_roll": 0,
                 "effects": [],
-                "lotto_guess": 9,
-                "villager_of_the_day": "Elmer",
+                "lotto_guess": 1,
+                "villager_of_the_day": "Toby",
                 "villagers": [
                     "Petri",
-                    "Eugene",
                     "Ankha",
-                    "Cece"
+                    "Cece",
+                    "Mineru",
+                    "Ione"
                 ],
                 "has_got_daily_traveler": false
             },
             "366975965601071104": {
                 "level": 2,
                 "timely": 1774603268,
-                "roses": 1068,
+                "roses": 1222,
                 "candies": 0,
                 "ideas": 20,
                 "tech": 0,
@@ -632,66 +648,24 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 1,
+                "free_sunday_roll": 0,
                 "effects": [
                     "never_played"
                 ],
                 "lotto_guess": -1,
-                "villager_of_the_day": "Rosie",
+                "villager_of_the_day": "Del",
                 "villagers": [
                     "Graham"
                 ],
                 "has_got_daily_traveler": false
             },
             "1212879268305043476": {
-                "level": 12,
-                "timely": 1779046366,
-                "roses": 3410,
-                "candies": 3,
-                "ideas": 44,
-                "tech": 4,
-                "bank": {
-                    "roses": -1,
-                    "candies": 0,
-                    "ideas": 0
-                },
-                "achievements": [],
-                "wordle_en": {},
-                "wordle_fr": {},
-                "wordle_sp": {},
-                "wordle_ge": {},
-                "wordle_stats_en": {
-                    "todays_w_results_shown": 0
-                },
-                "wordle_stats_fr": {
-                    "todays_w_results_shown": 0
-                },
-                "wordle_stats_sp": {
-                    "todays_w_results_shown": 0
-                },
-                "wordle_stats_ge": {
-                    "todays_w_results_shown": 0
-                },
-                "free_sunday_roll": 1,
-                "effects": [
-                    "never_played"
-                ],
-                "lotto_guess": 7,
-                "villager_of_the_day": "[STOP]",
-                "villagers": [
-                    "Poppy",
-                    "Punchy",
-                    "Lily"
-                ],
-                "has_got_daily_traveler": false
-            },
-            "752574610666684426": {
                 "level": 16,
-                "timely": 1779035050,
-                "roses": 1576,
-                "candies": 3,
-                "ideas": 30,
-                "tech": 5,
+                "timely": 178287659,
+                "roses": 6595,
+                "candies": 4,
+                "ideas": 60,
+                "tech": 6,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
@@ -714,40 +688,49 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 0,
-                "effects": [],
-                "lotto_guess": 4,
                 "villager_of_the_day": "[STOP]",
                 "villagers": [
-                    "Phoebe",
-                    "Fauna",
-                    "Erik",
-                    "Audie"
+                    "Poppy",
+                    "Punchy",
+                    "Lily",
+                    "Purrl"
                 ],
-                "has_got_daily_traveler": true
+                "has_got_daily_traveler": false,
+                "free_sunday_roll": 0,
+                "effects": [
+                    "never_played"
+                ],
+                "lotto_guess": -1,
+                "wordle_ban": 0
             },
-            "443867585075871767": {
-                "level": 10,
-                "timely": 1779047249,
-                "roses": 291,
-                "candies": 1,
-                "ideas": 36,
+            "752574610666684426": {
+                "level": 19,
+                "timely": 1782869713,
+                "roses": 7784,
+                "candies": 4,
+                "ideas": 43,
                 "tech": 7,
                 "bank": {
-                    "roses": -1,
+                    "roses": 0,
                     "candies": 0,
                     "ideas": 0
                 },
                 "achievements": [],
                 "wordle_en": {},
-                "wordle_fr": {},
+                "wordle_fr": {
+                    "0adieu": "\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5",
+                    "1repas": "\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5\ud83d\udfe8\ud83d\udfe8",
+                    "2passe": "\ud83d\udfe5\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9",
+                    "3tasse": "\ud83d\udfe5\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9",
+                    "4basse": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                },
                 "wordle_sp": {},
                 "wordle_ge": {},
                 "wordle_stats_en": {
                     "todays_w_results_shown": 0
                 },
                 "wordle_stats_fr": {
-                    "todays_w_results_shown": 0
+                    "todays_w_results_shown": 1
                 },
                 "wordle_stats_sp": {
                     "todays_w_results_shown": 0
@@ -757,19 +740,67 @@
                 },
                 "free_sunday_roll": 0,
                 "effects": [],
-                "lotto_guess": 12,
-                "villager_of_the_day": "Muffy",
+                "lotto_guess": 4,
+                "villager_of_the_day": "[STOP]",
                 "villagers": [
-                    "Frank",
-                    "Julian",
-                    "Cobb"
+                    "Phoebe",
+                    "Fauna",
+                    "Audie",
+                    "Tangy"
+                ],
+                "has_got_daily_traveler": false
+            },
+            "443867585075871767": {
+                "level": 10,
+                "timely": 1782840195,
+                "roses": 12126,
+                "candies": 2,
+                "ideas": 60,
+                "tech": 8,
+                "bank": {
+                    "roses": 0,
+                    "candies": 0,
+                    "ideas": 0
+                },
+                "achievements": [],
+                "wordle_en": {},
+                "wordle_fr": {
+                    "0train": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5\ud83d\udfe5",
+                    "1place": "\ud83d\udfe5\ud83d\udfe5\ud83d\udfe8\ud83d\udfe5\ud83d\udfe9",
+                    "2lasse": "\ud83d\udfe5\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9",
+                    "3masse": "\ud83d\udfe5\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9",
+                    "4fasse": "\ud83d\udfe5\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9",
+                    "5basse": "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+                },
+                "wordle_sp": {},
+                "wordle_ge": {},
+                "wordle_stats_en": {
+                    "todays_w_results_shown": 0
+                },
+                "wordle_stats_fr": {
+                    "todays_w_results_shown": 1
+                },
+                "wordle_stats_sp": {
+                    "todays_w_results_shown": 0
+                },
+                "wordle_stats_ge": {
+                    "todays_w_results_shown": 0
+                },
+                "free_sunday_roll": 0,
+                "effects": [],
+                "lotto_guess": 9,
+                "villager_of_the_day": "Biskit",
+                "villagers": [
+                    "Cobb",
+                    "Rodeo",
+                    "Barold"
                 ],
                 "has_got_daily_traveler": false
             },
             "183259368286978048": {
-                "level": 0,
-                "timely": 1772411271,
-                "roses": 600,
+                "level": 3,
+                "timely": 1782418717,
+                "roses": 563,
                 "candies": 0,
                 "ideas": 9,
                 "tech": 0,
@@ -795,12 +826,10 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 1,
-                "effects": [
-                    "never_played"
-                ],
+                "free_sunday_roll": 0,
+                "effects": [],
                 "lotto_guess": -1,
-                "villager_of_the_day": "Naomi",
+                "villager_of_the_day": "Jeremiah",
                 "villagers": [
                     "Cookie"
                 ],
@@ -808,13 +837,13 @@
             },
             "269210243093889028": {
                 "level": 6,
-                "timely": 1778999060,
-                "roses": 0,
+                "timely": 1782758033,
+                "roses": 222,
                 "candies": 0,
-                "ideas": 8,
-                "tech": 4,
+                "ideas": 63,
+                "tech": 1,
                 "bank": {
-                    "roses": -1,
+                    "roses": 0,
                     "candies": 1,
                     "ideas": 0
                 },
@@ -836,11 +865,9 @@
                     "todays_w_results_shown": 0
                 },
                 "free_sunday_roll": 0,
-                "effects": [
-                    "free_flip_when_collect"
-                ],
-                "lotto_guess": -1,
-                "villager_of_the_day": "Beau",
+                "effects": [],
+                "lotto_guess": 2,
+                "villager_of_the_day": "Cookie",
                 "villagers": [
                     "Blaire",
                     "Wade"
@@ -848,12 +875,12 @@
                 "has_got_daily_traveler": false
             },
             "290494427330510849": {
-                "level": 7,
-                "timely": 1778965844,
-                "roses": 3154,
+                "level": 9,
+                "timely": 1782071396,
+                "roses": 5447,
                 "candies": 0,
-                "ideas": 69,
-                "tech": 0,
+                "ideas": 5,
+                "tech": 4,
                 "bank": {
                     "roses": 0,
                     "candies": 0,
@@ -878,17 +905,17 @@
                 },
                 "free_sunday_roll": 0,
                 "effects": [],
-                "lotto_guess": 6,
-                "villager_of_the_day": "Fauna",
+                "lotto_guess": -1,
+                "villager_of_the_day": "Sparro",
                 "villagers": [
-                    "Aurora",
-                    "Cyrano"
+                    "Cyrano",
+                    "Ruby"
                 ],
-                "has_got_daily_traveler": true
+                "has_got_daily_traveler": false
             },
             "553163806600331284": {
                 "level": 0,
-                "timely": 1778553645,
+                "timely": 1781497044,
                 "roses": 0,
                 "candies": 0,
                 "ideas": 0,
@@ -915,12 +942,12 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 1,
+                "free_sunday_roll": 0,
                 "effects": [
                     "never_played"
                 ],
                 "lotto_guess": -1,
-                "villager_of_the_day": "Ava",
+                "villager_of_the_day": "Nibbles",
                 "villagers": [],
                 "has_got_daily_traveler": false
             },
@@ -953,12 +980,12 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 1,
+                "free_sunday_roll": 0,
                 "effects": [
                     "never_played"
                 ],
                 "lotto_guess": -1,
-                "villager_of_the_day": "Genji",
+                "villager_of_the_day": "Broffina",
                 "villagers": [
                     "Avery"
                 ],
@@ -993,12 +1020,12 @@
                 "wordle_stats_ge": {
                     "todays_w_results_shown": 0
                 },
-                "free_sunday_roll": 1,
+                "free_sunday_roll": 0,
                 "effects": [
                     "never_played"
                 ],
                 "lotto_guess": -1,
-                "villager_of_the_day": "Vic",
+                "villager_of_the_day": "Admiral",
                 "villagers": [],
                 "has_got_daily_traveler": false
             }
